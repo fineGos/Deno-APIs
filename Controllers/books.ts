@@ -4,32 +4,33 @@ import { Books } from '../types.ts'
 let books: Books[] = [
     {
       id: "1",
-      name: "The Hobbit",
+      title: "The Hobbit",
       author: "J. R. R. Tolkien",
       price: 99.99,
     },
     {
       id: "2",
-      name: "Harry Potter",
+      title: "Harry Potter",
       author: "J. K. Rowling",
       price: 150.99,
     },
     {
       id: "3",
-      name: "The Alchemyst",
+      title: "The Alchemyst",
       author: "Michael Scott",
       price: 199.99,
     },
   ];
 
- export const getProducts = ({ response }: { response: any }) => {
+ export const getBooks = ({ response }: { response: any }) => {
+    response.status = 200
     response.body = {
         success: true,
         data: books
     }
 }
 
-export const getProduct = ({ params, response }: { params: { id: string }, response: any }) => {
+export const getBook = ({ params, response }: { params: { id: string }, response: any }) => {
     const book: Books | undefined = books.find(p => p.id === params.id)
 
     if (book) {
@@ -48,7 +49,7 @@ export const getProduct = ({ params, response }: { params: { id: string }, respo
 }
 
 
-export const addProduct = async ({ request, response }: { request: any, response: any }) => {    
+export const addBook = async ({ request, response }: { request: any, response: any }) => {    
     const body = await request.body()
 
     if (!request.hasBody) {
@@ -60,6 +61,7 @@ export const addProduct = async ({ request, response }: { request: any, response
     } else {
         const book: Books = body.value
         book.id = v4.generate()
+
         books.push(book)
         response.status = 201
         response.body = {
@@ -69,7 +71,23 @@ export const addProduct = async ({ request, response }: { request: any, response
     }
 }
 
-export const deleteProduct = ({ params, response }: { params: { id: string }, response: any }) => {
+export const updateBook = async({params, request, response} : {params :{id: string}, request: any, response:any }) => {
+    let book: Books | undefined = books.find(p => p.id === params.id)
+    if (book) {
+        const body = await request.body()
+        const updateInfo : { author?: string; title?: string} =body.value
+        book = { ...book, ...updateInfo}
+        books = [...books.filter(book => book.id !== params.id), book]
+        response.status = 200
+        response.body = { message: 'Success'}
+    }
+    else {
+        response.status = 404
+        response.body = { message: 'Book not found'}
+    }
+}
+
+export const deleteBook = ({ params, response }: { params: { id: string }, response: any }) => {
     books = books.filter(p => p.id !== params.id)
     response.body = { 
         success: true,
