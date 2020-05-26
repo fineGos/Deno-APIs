@@ -6,19 +6,19 @@ let books: Books[] = [
       id: "1",
       title: "The Hobbit",
       author: "J. R. R. Tolkien",
-      price: 99.99,
+      price: 200,
     },
     {
       id: "2",
       title: "Harry Potter",
       author: "J. K. Rowling",
-      price: 150.99,
+      price: 400,
     },
     {
       id: "3",
-      title: "The Alchemyst",
-      author: "Michael Scott",
-      price: 199.99,
+      title: "The Alchemist",
+      author: "Paulo Coelho",
+      price: 350,
     },
   ];
 
@@ -32,12 +32,11 @@ let books: Books[] = [
 
 export const getBook = ({ params, response }: { params: { id: string }, response: any }) => {
     const book: Books | undefined = books.find(p => p.id === params.id)
-
     if (book) {
         response.status = 200
         response.body = {
             success: true,
-            data: books
+            data: book
         }
     } else {
         response.status = 404
